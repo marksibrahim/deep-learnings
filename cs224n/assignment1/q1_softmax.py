@@ -30,14 +30,18 @@ def softmax(x):
 
     if len(x.shape) > 1:
         # Matrix
-        ### YOUR CODE HERE
-        raise NotImplementedError
-        ### END YOUR CODE
+        # substracting max leaves function unchanged due to softmax's invariance to sums by a constant 
+        # keepdims= True, because broadcasting requires trailing shape entries to match
+        x -= np.max(x, axis=1, keepdims=True)
+        x = np.exp(x)
+        sum_exp_xj = np.sum(x, axis=1, keepdims=True)
+        x = np.divide(x, sum_exp_xj)
     else:
         # Vector
-        ### YOUR CODE HERE
-        raise NotImplementedError
-        ### END YOUR CODE
+        x -= np.max(x)
+        x = np.exp(x)
+        sum_exp_xj = np.sum(x)
+        x = np.divide(x, sum_exp_xj)
 
     assert x.shape == orig_shape
     return x
@@ -78,7 +82,7 @@ def test_softmax():
     """
     print "Running your tests..."
     ### YOUR CODE HERE
-    raise NotImplementedError
+    assert 1 == 1
     ### END YOUR CODE
 
 
