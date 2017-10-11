@@ -36,7 +36,11 @@ def forward_backward_prop(data, labels, params, dimensions):
     b2 = np.reshape(params[ofs:ofs + Dy], (1, Dy))
 
     ### YOUR CODE HERE: forward propagation
-    raise NotImplementedError
+    weighted_data1 = np.add(np.multiply(data, W1),  b1)
+    layer1_output = sigmoid(weighted_data)
+
+    weighted_data2 =  np.add(np.multiply(layer1_output, W2),  b2)
+    output = softmax(weighted_data2)
     ### END YOUR CODE
 
     ### YOUR CODE HERE: backward propagation
@@ -80,7 +84,6 @@ def your_sanity_checks():
     """
     print "Running your sanity checks..."
     ### YOUR CODE HERE
-    raise NotImplementedError
     ### END YOUR CODE
 
 
