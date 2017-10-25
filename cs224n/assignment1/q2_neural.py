@@ -36,15 +36,46 @@ def forward_backward_prop(data, labels, params, dimensions):
     b2 = np.reshape(params[ofs:ofs + Dy], (1, Dy))
 
     ### YOUR CODE HERE: forward propagation
-    weighted_data1 = np.add(np.multiply(data, W1),  b1)
-    layer1_output = sigmoid(weighted_data)
+    z1 = data.dot(W1) + b1
+    h1 = data.dot(W1) + b1
+    # layer one output
+    a1 = sigmoid(z1)
 
-    weighted_data2 =  np.add(np.multiply(layer1_output, W2),  b2)
-    output = softmax(weighted_data2)
+    z2 =  np.add(np.dot(a1, W2),  b2)
+    predicted = softmax(z2)
     ### END YOUR CODE
 
     ### YOUR CODE HERE: backward propagation
-    raise NotImplementedError
+        # cost is summed across entire dataset, then divided by num samples
+    cost = -1 * np.sum(labels * np.log(predicted)) / data.shape[0]
+
+    # based on question 2b. of cross entropy
+        # with respect to the input of the output layer
+    gradZ2 = predicted - labels
+    # z2 = w2 a1 + b2
+        # w2 is the variable so dz2/dw2 = a1
+    gradW2 = np.dot(a1.T, gradZ2)
+    # d C / d b2 = gradZ2 * d Z2 / d b2 = gradZ2
+        # we want to sum across all rows
+    gradb2 = np.sum(gradZ2, axis=0)
+
+    # grada1 will help us compute gradW1, gradb1 
+    # d C / d a1 = d C / d Z2 * d Z2 / d a1
+        # = gradZ2 * w2
+    grada1 = np.dot(gradZ2, W2.T)
+    # ==> gradZ1 = a1(1 - a1) * grada1
+    # since derivative of sigmoid = sigmoid * (1 - sigmoid)
+    gradZ1 = a1*(1 - a1)*grada1
+
+    # gradW1 = d C / d z1 * d z1 / d W1
+        # z1 = w1 * data + b1
+        # ==> gradW1 = gradz1 * data
+    gradW1 = np.dot(data.T, gradZ1)
+    gradb1 = np.sum(gradZ1, axis=0)
+
+    # Finally divide weights  and biases by number of samples
+    gradW1, gradW2 = gradW1 / data.shape[0], gradW2 / data.shape[0]
+    gradb1, gradb2 = gradb1 / data.shape[0], gradb2 / data.shape[0]
     ### END YOUR CODE
 
     ### Stack gradients (do not modify)
